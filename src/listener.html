@@ -1,0 +1,55 @@
+<!--Code Taken from and Edited for our use from Official Rosbridge wiki tutorial
+http://wiki.ros.org/roslibjs/Tutorials/BasicRosFunctionality -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script type="text/javascript" type="text/javascript">
+
+/*Connecting to ROS
+  creates 'ros' node object to communicate with rosbridge server running at
+  ip 192.168.1.161 on port 9090.
+*/
+  var ros = new ROSLIB.Ros({
+    url : 'ws://192.168.1.161:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+
+  /*listens to topic 'e2sh_mantra' of messageType std_msgs/String
+    messageType must match messageType of topic 'e2sh_mantra'
+  */
+  var listener = new ROSLIB.Topic({
+    ros : ros,
+    name : '/e2sh_mantra',
+    messageType : 'std_msgs/String'
+  });
+
+  //subscribes to top 'e2sh_mantra' and outputs a the messages to
+  //browser's console.
+  listener.subscribe(function(message) {
+    console.log('Received message on ' + listener.name + ': ' + message.data);
+  });
+
+</script>
+</head>
+
+<body>
+  <h1>Reading from /e2sh_mantra</h1>
+  <p>Check your Web Console for output.</p>
+</body>
+</html>
